@@ -43,14 +43,10 @@ private[scalatest] class SocketReporter(host: String, port: Int) extends Resourc
   def apply(event: Event): Unit = {
     synchronized {
       try {
-        out.get.writeObject(event)
+        out.get.writeObject(event.ensureSerializable())
         out.get.flush()
       }
       catch {
-        case e: java.io.NotSerializableException =>
-          refresh()
-          out.get.writeObject(event.ensureSerializable())
-
         case e: Throwable if anExceptionThatShouldCauseAnAbort(e) => refresh()
       }
     }
