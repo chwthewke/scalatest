@@ -67,7 +67,12 @@ object ScalatestBuild extends BuildCommons with DottyBuild with NativeBuild with
     javaHome := getJavaHome(scalaBinaryVersion.value),
     version := releaseVersion,
     resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public",
-    publishTo := sonatypePublishToBundle.value, 
+    publishTo := Some(
+      if (version.value.endsWith("-SNAPSHOT"))
+        "Nexus snapshots" at "https://nexus.epitest.eu/repository/maven-snapshots"
+      else
+        "Nexus releases" at "https://nexus.epitest.eu/repository/maven-releases"
+    ),
     publishMavenStyle := true,
     publishArtifact in Test := false,
     pomIncludeRepository := { _ => false },
